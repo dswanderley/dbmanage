@@ -20,14 +20,14 @@ import numpy as np
 
 class ImageData:
     '''Define Image Data class'''
-    def __init__(self, uid='', folder='./'):
+    def __init__(self, uid='', filename='', folder='./'):
 
         self.image_id = uid
-        self.filename = uid + '.png'
+        self.filename = filename
         self.folder = folder
         self.path = folder + self.filename
         # Form information
-        self.originalname = None
+        self.original_name = None
         self.date_acquisition = None
         self.date_upload = None
         self.observations = None    # Text field
@@ -70,7 +70,7 @@ def filename_gen():
     for _ in range (6):
         text += charset[random.randint(0, len(charset)-1)]
     text += '_'
-    text += charset[random.randint(0, len(charset))]
+    text += charset[random.randint(0, len(charset)-1)]
     text +=  charset[day] +  charset[year] +  charset[mon]
     for _ in range(6):
         text += charset[random.randint(0, len(charset)-1)]
@@ -81,28 +81,59 @@ def filename_gen():
     return text
 
 
-# Root directory
-I_DIR = '../images'
-# Set of files
-DICOM_LIST = (glob.glob(os.path.join(I_DIR + '/', '*.dcm')))
-folder = '../upload/'
+def save_data(in_dir='../images/dicom', out_dir='../images/upload/'):
+    '''
+        Save images as .png and returns list of images.
+    '''
+    # Root directory
+    I_DIR = i_dir
+    # Set of files
+    DICOM_LIST = (glob.glob(os.path.join(I_DIR + '/', '*.dcm')))
+    folder = out_dir
 
-for dcm_str in DICOM_LIST:
+    output_data = []
 
-    dcm = pydicom.dcmread(dcm_str)
-    new_name = folder + filename_gen() + ".png"
+    # Read input folder
+    for dcm_str in DICOM_LIST:
+        # Read DICOM
+        dcm = pydicom.dcmread(dcm_str)
+        im_id = dcm.SOPInstanceUID
 
-    pixel_array_numpy = dcm.pixel_array
-    pixel_array_numpy_2 = np.copy(pixel_array_numpy)
-    pixel_array_numpy_2[...,0] = pixel_array_numpy[...,2]
-    pixel_array_numpy_2[...,2] = pixel_array_numpy[...,0]
+        # Get image (as numpy)
+        pixel_array_numpy = dcm.pixel_array
+        pixel_array_numpy = np.copy(dcm.pixel_array)
+        pixel_array_numpy[...,0] = dcm.pixel_array[...,2]
+        pixel_array_numpy[...,2] = dcm.pixel_array[...,0]
 
-    im_id = dcm.SOPInstanceUID
-    imdata = ImageData(uid=im_id, folder=folder)
-    cv2.imwrite(new_name, pixel_array_numpy_2)
+        # save Image
+        new_name = filename_gen() + ".png"
+        cv2.imwrite(folder + new_name, pixel_array_numpy)
 
-    imdata.eye = dcm.Laterality
-    imdata.patient_id = dcm.PatientID
-    imdata.width = dcm.Rows
-    imdata.height = dcm.Columns
-    print(imdata)
+        # Set data        
+        imdata = ImageData(uid=im_id, filename=new_name, folder=folder)
+        # Aqusition datetime
+        date_time = datetime.datetime(int(dcm.ContentDate[0:4]),
+                                    int(dcm.ContentDate[4:6]),
+                                    int(dcm.ContentDate[6:8]), 
+                                    int(dcm.ContentTime[0:2]),
+                                    int(dcm.ContentTime[2:4]),
+                                    int(dcm.ContentTime[4:6]))
+        imdata.date_acquisition = str(date_time)
+        # Uplaod datetime
+        imdata.date_upload = str(datetime.datetime.now())        
+        # original name
+        imdata.original_name = im_id + '.dcm'
+        # laterality
+        imdata.eye = dcm.Laterality
+        # Patient ID
+        imdata.patient_id = dcm.PatientID
+        # image width
+        imdata.width = dcm.Rows
+        # image height
+        imdata.height = dcm.Columns
+
+        # store imdata
+        output_data.append(imdata)
+
+    return output_data
+

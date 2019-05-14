@@ -10,6 +10,7 @@ Created on Tue May 07 10:39:30 2019
 
 import json
 import pymongo
+from read_dicom import *
 from urllib.parse import quote_plus
 
 
@@ -29,6 +30,8 @@ db = client.get_database('screendr_db')
 print(db)
 
 print('')
+
+aux = filename_gen()
 
 # Get Collection
 coll_images = db.images
