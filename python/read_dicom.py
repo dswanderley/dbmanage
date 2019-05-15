@@ -49,6 +49,7 @@ class ImageData:
         self.annotations = []
 
     def toJSON(self):
+        ''' Convert the object to JSON format (string)'''
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
 
@@ -139,6 +140,9 @@ def read_dcm_save_png(in_dir='../images/dicom', out_dir='../images/upload/'):
         imdata.height = dcm.Columns
 
         # store imdata
-        output_data.append(imdata.toJSON())
+        output_data.append(imdata.__dict__)
 
     return output_data
+
+
+read_dcm_save_png()
