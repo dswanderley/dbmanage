@@ -31,7 +31,7 @@ print(db)
 
 print('')
 
-data_list = filename_gen()
+data_list = read_dcm_save_png()
 print(data_list)
 
 # Get Collection
