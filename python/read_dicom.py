@@ -11,6 +11,7 @@ Created on Tue May 07 16:43:40 2019
 import os
 import glob
 import math
+import json
 import datetime
 import random
 import pydicom
@@ -46,6 +47,11 @@ class ImageData:
         self.normality_pred = -1.0
         self.grading = None # bool
         self.annotations = []
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
 
 def filename_gen():
     ''' @description Generate data from '''
@@ -133,7 +139,6 @@ def read_dcm_save_png(in_dir='../images/dicom', out_dir='../images/upload/'):
         imdata.height = dcm.Columns
 
         # store imdata
-        output_data.append(imdata)
+        output_data.append(imdata.toJSON())
 
     return output_data
-
