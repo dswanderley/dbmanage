@@ -31,7 +31,8 @@ print(db)
 
 print('')
 
-aux = filename_gen()
+data_list = filename_gen()
+print(data_list)
 
 # Get Collection
 coll_images = db.images

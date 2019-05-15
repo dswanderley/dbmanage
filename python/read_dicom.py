@@ -81,7 +81,7 @@ def filename_gen():
     return text
 
 
-def save_data(in_dir='../images/dicom', out_dir='../images/upload/'):
+def read_dcm_save_png(in_dir='../images/dicom', out_dir='../images/upload/'):
     '''
         Save images as .png and returns list of images.
     '''
