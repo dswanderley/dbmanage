@@ -27,14 +27,20 @@ DB_URI += "?retryWrites=true"
 # Read DB
 client = pymongo.MongoClient(DB_URI)
 db = client.get_database('screendr_db')
-print(db)
-
-print('')
-
-data_list = read_dcm_save_png()
-print(data_list)
 
 # Get Collection
-coll_images = db.images
-print(list(coll_images.find()))
+images = db.images
+print('Number of images (before insertion):  {:d}'.format(images.count_documents({})))
 
+# Process data
+data_list = read_dcm_save_png()
+# Store content (documents)
+if len(data_list) == 1:
+    images.insert_one(data_list[0])
+elif len(data_list) > 1:
+    images.insert_many(data_list)
+else:
+    pass
+
+# New insertions
+print('Number of images (after insertion):  {:d}'.format(images.count_documents({})))
