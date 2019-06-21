@@ -11,7 +11,6 @@ Created on Tue May 07 16:43:40 2019
 import os
 import glob
 import math
-import json
 import datetime
 import random
 import pydicom
@@ -47,11 +46,6 @@ class ImageData:
         self.normality_pred = -1.0
         self.grading = None # bool
         self.annotations = []
-
-    def toJSON(self):
-        ''' Convert the object to JSON format (string)'''
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
 
 
 def filename_gen():
@@ -93,7 +87,7 @@ def read_dcm_save_png(in_dir='../images/dicom', out_dir='../images/upload/'):
         Save images as .png and returns list of images.
     '''
     # Root directory
-    I_DIR = in_dir
+    I_DIR = i_dir
     # Set of files
     DICOM_LIST = (glob.glob(os.path.join(I_DIR + '/', '*.dcm')))
     folder = out_dir
@@ -116,18 +110,18 @@ def read_dcm_save_png(in_dir='../images/dicom', out_dir='../images/upload/'):
         new_name = filename_gen() + ".png"
         cv2.imwrite(folder + new_name, pixel_array_numpy)
 
-        # Set data
+        # Set data        
         imdata = ImageData(uid=im_id, filename=new_name, folder=folder)
         # Aqusition datetime
         date_time = datetime.datetime(int(dcm.ContentDate[0:4]),
                                     int(dcm.ContentDate[4:6]),
-                                    int(dcm.ContentDate[6:8]),
+                                    int(dcm.ContentDate[6:8]), 
                                     int(dcm.ContentTime[0:2]),
                                     int(dcm.ContentTime[2:4]),
                                     int(dcm.ContentTime[4:6]))
         imdata.date_acquisition = str(date_time)
         # Uplaod datetime
-        imdata.date_upload = str(datetime.datetime.now())
+        imdata.date_upload = str(datetime.datetime.now())        
         # original name
         imdata.original_name = im_id + '.dcm'
         # laterality
@@ -140,9 +134,7 @@ def read_dcm_save_png(in_dir='../images/dicom', out_dir='../images/upload/'):
         imdata.height = dcm.Columns
 
         # store imdata
-        output_data.append(imdata.__dict__)
+        output_data.append(imdata)
 
     return output_data
 
-
-read_dcm_save_png()
