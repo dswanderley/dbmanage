@@ -38,23 +38,27 @@ images36 = list(coll_images36.find({}))
 # Read collection 1
 for im27 in images27:
     # Get data
-    h = im27['width']
-    w = im27['height']
+    w = im27['width']
+    h = im27['height']
     mongo_id = im27['_id']
-    # Set data 
-    im27['height'] = h
-    im27['width'] = w
-    # Update
-    coll_images27.update_one({'_id':mongo_id}, {"$set": im27}, upsert=False)
+    # Compare and verify error
+    if w < h:    
+        # Set data 
+        im27['height'] = w
+        im27['width'] = h
+        # Update
+        coll_images27.update_one({'_id':mongo_id}, {"$set": im27}, upsert=False)
 
 # Read collection 2
 for im36 in images27:
     # Get data
-    h = im36['width']
-    w = im36['height']
+    w = im36['width']
+    h = im36['height']
     mongo_id = im36['_id']
-    # Set data 
-    im36['height'] = h
-    im36['width'] = w
-    # Update
-    coll_images36.update_one({'_id':mongo_id}, {"$set": im36}, upsert=False)
+    # Compare and verify error
+    if w < h:    
+        # Set data 
+        im36['height'] = w
+        im36['width'] = h
+        # Update
+        coll_images36.update_one({'_id':mongo_id}, {"$set": im36}, upsert=False)
