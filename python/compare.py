@@ -45,7 +45,7 @@ for im27 in images27:
     qual27 = im27['quality']
     norm27 = im27['normality']
     # Read collection 1
-    for im36 in images27:
+    for im36 in images36:
         qual36 = im36['quality']
         norm36 = im36['normality']
 
@@ -62,14 +62,16 @@ for im27 in images27:
                 norm36['dr_pred']
             ]
             images.append(el)
+            print(el)
             # Check quality
-            if qual27['q_pred'] != qual36['q_pred']:
+            if qual27['qual'] != qual36['qual']:
                 qual_mis += 1
             # Check normaliy
-            if norm27['dr_pred'] != norm36['dr_pred']:
-                norm27 += 1
+            if norm27['dr'] != norm36['dr']:
+                norm_mis += 1
 
             break
+
 
 print('Images existing in both collections:  {:d}'.format(equals))
 print('Quality   disagreements:  {:d}'.format(qual_mis))
