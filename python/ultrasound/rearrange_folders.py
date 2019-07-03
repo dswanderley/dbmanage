@@ -9,13 +9,14 @@ Created on Wed Jul 03 10:56:15 2019
 
 import os
 import shutil
-import xmltodict
+#import xmltodict
 
 input_folder = "//192.168.106.134/Diego Wanderley/Ultrasonix/filtered_data"
 output_folder = "//192.168.106.134/Diego Wanderley/Ultrasonix/organized"
 
 # Get internal folders (by patient ID)
 folders_in = os.listdir(input_folder)
+count = 0
 # Read content
 for pat_id in folders_in:
     # Full path
@@ -41,8 +42,9 @@ for pat_id in folders_in:
             # Get list of documents
             pnglist = [f[:8] for f in os.listdir(exam_path) if f.endswith('.png')]
             xmllist = [f[:8] for f in os.listdir(exam_path) if f.endswith('.xml')]
+            rflist = [f[:8] for f in os.listdir(exam_path) if f.endswith('.rf')]
             # Unique documents            
-            docs = set(pnglist).intersection(xmllist)
+            docs = set(pnglist).intersection(xmllist).intersection(rflist)
             # Read each file
             for d in docs:
                 # New name and output path (without extensions)
@@ -65,6 +67,7 @@ for pat_id in folders_in:
                 with open(path_xml) as fd:
                     ex_doc = xmltodict.parse(fd.read())
                 '''
+                count += 1
 
-                print('')
+print(count)
 
