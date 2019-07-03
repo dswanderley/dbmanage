@@ -2,3 +2,4 @@ python/keys.json
 images/
 python/__pycache__/read_dicom.cpython-36.pyc
 python/keys_cber.json
+python/ultrasound/__pycache__/classes.cpython-36.pyc
