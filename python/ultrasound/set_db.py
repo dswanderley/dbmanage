@@ -26,9 +26,10 @@ DB_USER = DB_KEYS["user"]
 DB_URI = DB_KEYS["uri_header"] + "://" + DB_USER["username"] + ":" + DB_USER["password"] + "@" + DB_KEYS["host"]
 # Read DB
 client = pymongo.MongoClient(DB_URI)
-db = client.get_database('screendr_db')
+db = client.get_database('annotdb')
 
-data_path = "//192.168.106.134/Diego Wanderley/Ultrasonix/organized/Data"
+data_path = "/Users/Diego/Documents/UPorto/Dataset/Ultrasound/Data"
+            #"//192.168.106.134/Diego Wanderley/Ultrasonix/organized/Data"
 
 # Color values
 c_point = [0,252,54]
@@ -41,9 +42,9 @@ filelist = [f[:-4] for f in os.listdir(data_path) if f.endswith('.png')]
 
 # Read data
 for fname in filelist:
+
     # Check if image_id is new
-    if (db.images.find({'image_id': { "$in": fname}}).count() == 0):
-    {
+    if (db.images.find({ 'image_id': fname }).count() == 0):
         # Create object image data
         image_data = ImageData(uid=fname, folder="./gallery/")
         # Patient ID
@@ -66,7 +67,7 @@ for fname in filelist:
         i_auto = np.where(np.all(fov == c_auto, axis=-1))
         i_yinfo = np.where(np.all(fov == c_yinfo, axis=-1))
 
-        # Check 
+        # Check
         marks = ""
         if (len(i_point[0]) > 0):
             # has point
@@ -80,11 +81,11 @@ for fname in filelist:
         image_data.marks = marks
 
         ### XML ###
-        path_xml = os.path.join(data_path, fname + '.xml') 
+        path_xml = os.path.join(data_path, fname + '.xml')
         xml_doc = None
         with open(path_xml) as fd:
             xml_doc = xmltodict.parse(fd.read())
-        # Full object    
+        # Full object
         image_data.acquisition_data = xml_doc['object']
         # Date acquisition
         xml_date = xml_doc['object']['time']
@@ -94,14 +95,13 @@ for fname in filelist:
                             hour=int(xml_date['@hour']),
                             minute=int(xml_date['@minute']),
                             second=int(xml_date['@second']))
-        date_acq_zulu = "{}Z".format(date_acq.format('YYYY-MM-DDTHH:mm:ss.SSS'))    
+        date_acq_zulu = "{}Z".format(date_acq.format('YYYY-MM-DDTHH:mm:ss.SSS'))
         image_data.date_acquisition = date_acq_zulu
         # Upload date
         date_upload_zulu = "{}Z".format(arrow.utcnow().format('YYYY-MM-DDTHH:mm:ss.SSS'))
         image_data.date_upload = date_upload_zulu
 
         # Update dataset
-        db.images.insert_one(im_data)
-    }
+        db.images.insert_one(image_data.__dict__)
 
-    print('')
+        #print('')
