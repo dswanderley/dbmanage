@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun 21 12:1:03 2019
+Created on Tue Jun 21 12:01:03 2019
 
 @author: Diego Wanderley
 @python: 3.6
