@@ -31,7 +31,8 @@ db = client.get_database('screendr_db')
 data_path = "//192.168.106.134/Diego Wanderley/Ultrasonix/organized/Data"
 
 # Color values
-c_point = [0,252,54]
+c_point_alt = [0,252,54]
+c_point = [0,255,0]
 c_measure = [0,255,255]
 c_auto = [150,150,150]
 c_yinfo = [210,210,0]
@@ -39,6 +40,7 @@ c_yinfo = [210,210,0]
 # Get file list
 filelist = [f[:-4] for f in os.listdir(data_path) if f.endswith('.png')]
 
+counter = 0
 # Read data
 for fname in filelist:
     # Check if image_id is new
@@ -61,6 +63,7 @@ for fname in filelist:
         fov = img_np[100:700, 80:680, :]
 
         # Get indexes
+        i_point_alt = np.where(np.all(fov == c_point_alt, axis=-1))
         i_point = np.where(np.all(fov == c_point, axis=-1))
         i_measure = np.where(np.all(fov == c_measure, axis=-1))
         i_auto = np.where(np.all(fov == c_auto, axis=-1))
@@ -68,7 +71,7 @@ for fname in filelist:
 
         # Check 
         marks = ""
-        if (len(i_point[0]) > 0):
+        if (len(i_point[0]) > 0 or len(i_point_alt[0]) > 0):
             # has point
             marks = "point"
             if (len(i_measure[0]) > 0):
@@ -102,6 +105,7 @@ for fname in filelist:
 
         # Update dataset
         db.images.insert_one(im_data)
+        counter += 1
     }
 
-    print('')
+    print(counter + 'file(s) inserted.')
