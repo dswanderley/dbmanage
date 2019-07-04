@@ -41,9 +41,9 @@ c_yinfo = [210,210,0]
 # Get file list
 filelist = [f[:-4] for f in os.listdir(data_path) if f.endswith('.png')]
 
+counter = 0
 # Read data
 for fname in filelist:
-
     # Check if image_id is new
     if (db.images.find({ 'image_id': fname }).count() == 0):
         # Create object image data
@@ -105,5 +105,6 @@ for fname in filelist:
 
         # Update dataset
         db.images.insert_one(image_data.__dict__)
+        couter += 1
 
-        #print('')
+print(counter + 'file(s) inserted.')
