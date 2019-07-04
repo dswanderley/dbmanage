@@ -105,6 +105,6 @@ for fname in filelist:
 
         # Update dataset
         db.images.insert_one(image_data.__dict__)
-        couter += 1
+        counter += 1
 
-print(counter + 'file(s) inserted.')
+print(str(counter) + ' file(s) inserted.')
